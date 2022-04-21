@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/fans1992/gohub/bootstrap"
-	btsConfig "github.com/fans1992/gohub/config"
-	"github.com/fans1992/gohub/pkg/config"
+	"gohub/bootstrap"
+	btsConfig "gohub/config"
+	"gohub/pkg/config"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,6 +25,9 @@ func main() {
 
 	// new 一个 Gin Engine 实例
 	router := gin.New()
+
+	// 初始化 DB
+	bootstrap.SetupDB()
 
 	// 初始化路由绑定
 	bootstrap.SetupRoute(router)

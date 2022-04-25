@@ -1,3 +1,4 @@
+// Package requests 处理请求数据和表单验证
 package requests
 
 import (
@@ -9,8 +10,7 @@ type SignupPhoneExistRequest struct {
 	Phone string `json:"phone,omitempty" valid:"phone"`
 }
 
-func ValidateSignupPhoneExist(data interface{}, c *gin.Context) map[string][]string {
-
+func SignupPhoneExist(data interface{}, c *gin.Context) map[string][]string {
 	// 自定义验证规则
 	rules := govalidator.MapData{
 		"phone": []string{"required", "digits:11"},
@@ -24,16 +24,7 @@ func ValidateSignupPhoneExist(data interface{}, c *gin.Context) map[string][]str
 		},
 	}
 
-	// 配置初始化
-	opts := govalidator.Options{
-		Data:          data,
-		Rules:         rules,
-		Messages:      messages,
-		TagIdentifier: "valid", // 模型中的 Struct 标签标识符
-	}
-
-	// 开始验证
-	return govalidator.New(opts).ValidateStruct()
+	return validate(data, rules, messages)
 }
 
 type SignupEmailExistRequest struct {
@@ -57,15 +48,6 @@ func ValidateSignupEmailExist(data interface{}, c *gin.Context) map[string][]str
 		},
 	}
 
-	// 配置初始化
-	opts := govalidator.Options{
-		Data:          data,
-		Rules:         rules,
-		Messages:      messages,
-		TagIdentifier: "valid",  // 模型中的 Struct 标签标识符
-	}
-
-	// 开始验证
-	return govalidator.New(opts).ValidateStruct()
+	return validate(data, rules, messages)
 
 }

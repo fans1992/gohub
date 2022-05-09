@@ -3,13 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"gohub/bootstrap"
 	btsConfig "gohub/config"
-	"gohub/pkg/captcha"
 	"gohub/pkg/config"
-	"gohub/pkg/logger"
-
-	"github.com/gin-gonic/gin"
 )
 
 func init() {

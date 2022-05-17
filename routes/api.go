@@ -2,9 +2,8 @@
 package routes
 
 import (
-	"gohub/app/http/controllers/api/v1/auth"
-
 	"github.com/gin-gonic/gin"
+	"gohub/app/http/controllers/api/v1/auth"
 )
 
 // RegisterAPIRoutes 注册网页相关路由
@@ -43,6 +42,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			// 重置密码
 			pwc := new(auth.PasswordController)
 			authGroup.POST("/password-reset/using-phone", pwc.ResetByPhone)
+			authGroup.POST("/password-reset/using-email", pwc.ResetByEmail)
 		}
 	}
 }

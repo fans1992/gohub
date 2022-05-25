@@ -51,14 +51,19 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			// 图片验证码
 			authGroup.POST("/verify-codes/captcha", middlewares.LimitPerRoute("50-H"), vcc.ShowCaptcha)
 
-		}
+			uc := new(controllers.UsersController)
+			// 获取当前用户
+			v1.GET("/user", middlewares.AuthJWT(), uc.CurrentUser)
+			userGroup := v1.Group("/users")
+			{
+				userGroup.GET("", uc.Index)
+			}
 
-		uc := new(controllers.UsersController)
-		// 获取当前用户
-		v1.GET("/user", middlewares.AuthJWT(), uc.CurrentUser)
-		userGroup := v1.Group("/users")
-		{
-			userGroup.GET("", uc.Index)
+			cgc := new(controllers.CategoriesController)
+			cgcGroup := v1.Group("/categories")
+			{
+				cgcGroup.POST("", middlewares.AuthJWT(), cgc.Store)
+			}
 		}
 	}
 }

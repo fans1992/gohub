@@ -32,3 +32,23 @@ func (ctrl *UsersController) Index(c *gin.Context) {
 		"paper": paper,
 	})
 }
+
+func (ctrl *UsersController) UpdateProfile(c *gin.Context) {
+	request := requests.UserUpdateProfileRequest{}
+	if ok := requests.Validate(c, &request, requests.UserUpdateProfile); !ok {
+		return
+	}
+
+	currentUser := auth.CurrentUser(c)
+	currentUser.Name = request.Name
+	currentUser.Introduction = request.Introduction
+	currentUser.City = request.City
+	rowsAffected := currentUser.Save()
+
+	if rowsAffected > 0 {
+		response.Data(c, currentUser)
+		return
+	}
+
+	response.Abort500(c, "修改个人信息失败， 请稍后再试~")
+}

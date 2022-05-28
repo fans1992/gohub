@@ -90,3 +90,25 @@ func (ctrl *UsersController) UpdatePhone(c *gin.Context) {
 
 	response.Abort500(c, "手机号更新失败， 请稍候再试")
 }
+
+func (ctrl *UsersController) UpdatePassword(c *gin.Context) {
+
+	request := requests.UserUpdatePasswordRequest{}
+	if ok := requests.Validate(c, &request, requests.UserUpdatePassword); !ok {
+		return
+	}
+
+	currentUser := auth.CurrentUser(c)
+	// 验证原始密码是否正确
+	if _, err := auth.Attempt(currentUser.Name, request.Password); err != nil {
+		// 失败，显示错误提示
+		response.Unauthorized(c, "原密码不正确")
+		return
+	}
+
+	// 更新密码为新密码
+	currentUser.Password = request.NewPassword
+	currentUser.Save()
+
+	response.Success(c)
+}

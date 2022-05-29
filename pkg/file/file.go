@@ -3,6 +3,7 @@ package file
 
 import (
 	"fmt"
+	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
 	"gohub/pkg/app"
 	"gohub/pkg/auth"
@@ -34,7 +35,6 @@ func Exists(fileToCheck string) bool {
 func FileNameWithoutExtension(fileName string) string {
 	return strings.TrimSuffix(fileName, filepath.Ext(fileName))
 }
-
 func SaveUploadAvatar(c *gin.Context, file *multipart.FileHeader) (string, error) {
 
 	var avatar string
@@ -51,9 +51,27 @@ func SaveUploadAvatar(c *gin.Context, file *multipart.FileHeader) (string, error
 		return avatar, err
 	}
 
-	return avatarPath, nil
-}
+	// 裁切图片
+	img, err := imaging.Open(avatarPath, imaging.AutoOrientation(true))
+	if err != nil {
+		return avatar, err
+	}
+	resizeAvatar := imaging.Thumbnail(img, 256, 256, imaging.Lanczos)
+	resizeAvatarName := randomNameFromUploadFile(file)
+	resizeAvatarPath := publicPath + dirName + resizeAvatarName
+	err = imaging.Save(resizeAvatar, resizeAvatarPath)
+	if err != nil {
+		return avatar, err
+	}
 
+	// 删除老文件
+	err = os.Remove(avatarPath)
+	if err != nil {
+		return avatar, err
+	}
+
+	return dirName + resizeAvatarName, nil
+}
 func randomNameFromUploadFile(file *multipart.FileHeader) string {
 	return helpers.RandomString(16) + filepath.Ext(file.Filename)
 }
